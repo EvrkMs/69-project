@@ -1,7 +1,8 @@
 // Progress rules, independent of HTTP: which chapters are open and when a chapter counts as completed.
 
-/** A chapter is unlocked when every chapter before it is completed. */
-export const isUnlocked = (streamer, doneIds, index) => streamer.chapters.slice(0, index).every((c) => doneIds.includes(c.id));
+/** A chapter is unlocked when every chapter before it is completed; a museum-style hero sets meta.unlock = "free". */
+export const isUnlocked = (streamer, doneIds, index) =>
+  streamer.meta.unlock === 'free' || streamer.chapters.slice(0, index).every((c) => doneIds.includes(c.id));
 
 export const chapterIndex = (streamer, chapterId) => streamer.chapters.findIndex((c) => c.id === chapterId);
 

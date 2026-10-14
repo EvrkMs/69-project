@@ -1,6 +1,7 @@
 import { state } from '../state.js';
 import { proj } from './camera.js';
 import { ctx, drawPrism, shadeHex, onPlaneX, onPlaneY } from './gfx.js';
+import { drawFigure } from './figures.js';
 
 // Furniture models: an object with "model": "bed" is drawn from a few prisms and a painted front face instead of a plain
 // box. Every model stays inside the object's footprint (x, y, w, h) and height z, so collision and clicking are unchanged.
@@ -31,7 +32,94 @@ function shelves(o, rows, paintRow) {
   });
 }
 
+const darkPlate = '#14172a';
+
 export const MODELS = {
+  /** Pull-up bar: two posts, a steel crossbar, a base. */
+  pullupbar(o) {
+    const { x, y, w, h, z } = o, my = y + h / 2 - 0.06;
+    drawPrism(x, y, w, h, 0, 0.06, '#2a2d3a');
+    drawPrism(x + 0.08, my, 0.12, 0.12, 0.06, z, '#3a3f55');
+    drawPrism(x + w - 0.2, my, 0.12, 0.12, 0.06, z, '#3a3f55');
+    drawPrism(x + 0.08, my + 0.02, w - 0.16, 0.08, z - 0.14, z - 0.06, '#c8ccd8');
+  },
+
+  /** Wedding arch: two pillars, a beam and a garland of flowers along it. */
+  arch(o) {
+    const { x, y, w, h, z } = o, Z = state.Z;
+    drawPrism(x, y, 0.24, h, 0, z, '#ece4d6');
+    drawPrism(x + w - 0.24, y, 0.24, h, 0, z, '#ece4d6');
+    drawPrism(x, y, w, h, z - 0.26, z, '#ece4d6');
+    const flowers = ['#ff9fc0', '#ffe3ec', '#ffd166', '#ffffff'];
+    for (let k = 0; k < 11; k++) {
+      const p = proj(x + (k + 0.5) * (w / 11), y + h, z - 0.08 + Math.sin(k) * 0.05);
+      ctx.fillStyle = flowers[k % flowers.length];
+      ctx.beginPath(); ctx.arc(p.x, p.y, 7 * Z, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#4a9a5b'; ctx.beginPath(); ctx.arc(p.x + 5 * Z, p.y + 3 * Z, 4 * Z, 0, Math.PI * 2); ctx.fill();
+    }
+  },
+
+  /** Banquet table with a white cloth, plates, goblets and two candles. */
+  banquet(o) {
+    const { x, y, w, h, z } = o, Z = state.Z;
+    drawPrism(x, y, w, h, 0.1, z - 0.05, '#f4f0ea');
+    drawPrism(x - 0.02, y - 0.02, w + 0.04, h + 0.04, z - 0.05, z, '#ffffff');
+    const n = Math.max(2, Math.round(w * 1.4));
+    for (let i = 0; i < n; i++) {
+      const p = proj(x + 0.3 + i * ((w - 0.6) / (n - 1)), y + h * 0.5, z);
+      ctx.fillStyle = '#e8ecff'; ctx.beginPath(); ctx.ellipse(p.x, p.y, 10 * Z, 5 * Z, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = i % 2 ? '#ff6b9d' : '#7fd0ff'; ctx.fillRect(p.x + 8 * Z, p.y - 10 * Z, 3 * Z, 8 * Z);
+    }
+    for (const t of [0.25, 0.75]) {
+      const c = proj(x + w * t, y + h * 0.5, z);
+      ctx.fillStyle = '#fff6c8'; ctx.fillRect(c.x - 2 * Z, c.y - 16 * Z, 4 * Z, 14 * Z);
+      ctx.fillStyle = '#ffb000'; ctx.beginPath(); ctx.ellipse(c.x, c.y - 19 * Z, 3 * Z, 5 * Z, 0, 0, Math.PI * 2); ctx.fill();
+    }
+  },
+
+  /** A tin of fermented herring on a stand: a joke about the 100k stream. */
+  can(o) {
+    const { x, y, w, h, z } = o, Z = state.Z;
+    drawPrism(x + 0.1, y + 0.1, w - 0.2, h - 0.2, 0, z * 0.45, '#4a3626');
+    const b = proj(x + w / 2, y + h / 2, z * 0.45), t = proj(x + w / 2, y + h / 2, z), r = Math.min(w, h) * 0.34 * 36 * Z;
+    ctx.fillStyle = '#8b8f9a'; ctx.fillRect(b.x - r, t.y, r * 2, b.y - t.y);
+    ctx.fillStyle = '#c0504d'; ctx.fillRect(b.x - r, t.y + (b.y - t.y) * 0.3, r * 2, (b.y - t.y) * 0.4);
+    ctx.fillStyle = '#ffd166'; ctx.font = `${12 * Z}px system-ui`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('🐟', b.x, t.y + (b.y - t.y) * 0.5);
+    ctx.fillStyle = '#8b8f9a'; ctx.beginPath(); ctx.ellipse(b.x, b.y, r, r * 0.5, 0, 0, Math.PI); ctx.fill();
+    ctx.fillStyle = '#c8ccd8'; ctx.beginPath(); ctx.ellipse(b.x, t.y, r, r * 0.5, 0, 0, Math.PI * 2); ctx.fill();
+  },
+
+  /** Costume mannequin: a base and a figure dressed in the object's color (and hair color for a wig). */
+  mannequin(o) {
+    const { x, y, w, h } = o;
+    drawPrism(x + 0.15, y + 0.15, w - 0.3, h - 0.3, 0, 0.08, '#2a2d3a');
+    drawFigure(x + w / 2, y + h / 2, { body: o.color, hair: o.hair || '#2b1d14', skin: '#d9cdbf', face: -1 });
+  },
+
+  /** Auction podium: a step, a lectern with a front plate, a gavel on a sound block. */
+  podium(o) {
+    const { x, y, w, h, z, color } = o;
+    drawPrism(x, y, w, h, 0, 0.14, '#3b2e22');
+    drawPrism(x + w * 0.2, y + h * 0.15, w * 0.6, h * 0.7, 0.14, z, color);
+    face({ ...o, x: x + w * 0.2, w: w * 0.6, y: y + h * 0.15, h: h * 0.7, facing: 'y' }, () => {
+      ctx.fillStyle = darkPlate; ctx.fillRect(10, 10, 100, 80);
+      ctx.fillStyle = '#ffd166'; ctx.font = '800 30px system-ui'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('ЛОТ', 60, 52);
+    }, z, 0.14);
+    drawPrism(x + w * 0.34, y + h * 0.4, w * 0.12, h * 0.12, z, z + 0.04, '#5a4630');
+    drawPrism(x + w * 0.52, y + h * 0.42, w * 0.2, h * 0.07, z + 0.02, z + 0.08, '#c8ccd8');
+  },
+
+  /** Camera on a tripod with a glowing ring light (a streamer's corner). */
+  camera(o) {
+    const { x, y, w, h, z } = o, Z = state.Z, cx = x + w / 2, cy = y + h / 2;
+    for (const [dx, dy] of [[-0.18, -0.1], [0.18, -0.1], [0, 0.2]]) drawPrism(cx + dx - 0.03, cy + dy - 0.03, 0.06, 0.06, 0, z - 0.3, '#2a2d3a');
+    drawPrism(cx - 0.14, cy - 0.1, 0.28, 0.2, z - 0.3, z - 0.1, '#14161f');
+    const p = proj(cx, cy + 0.12, z + 0.1);
+    ctx.strokeStyle = '#fff6c8'; ctx.lineWidth = 5 * Z; ctx.shadowColor = '#fff6c8'; ctx.shadowBlur = 14 * Z;
+    ctx.beginPath(); ctx.ellipse(p.x, p.y, 20 * Z, 24 * Z, 0, 0, Math.PI * 2); ctx.stroke(); ctx.shadowBlur = 0;
+    ctx.fillStyle = '#ff3b3b'; ctx.beginPath(); ctx.arc(p.x, p.y, 3 * Z, 0, Math.PI * 2); ctx.fill();
+  },
+
   /** Writing desk: top, four legs, a drawer unit with handles. The monitor and keyboard are added by drawDesk. */
   desk(o) {
     const { x, y, w, h, z, color } = o;

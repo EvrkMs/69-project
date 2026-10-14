@@ -69,6 +69,7 @@ export function expandChapter(raw, ctx) {
   return {
     id: raw.id, year: raw.year, title: raw.title, intro: raw.intro,
     memento: raw.memento, // the keepsake that stands in the hero's room and opens this chapter
+    flashback: raw.flashback !== false, // events are memories: sepia look and a flash when entering and leaving
     tasks: raw.tasks, idle: raw.idle || [],
     scene: expandScene(raw.scene, ctx),
   };

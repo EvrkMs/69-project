@@ -1,6 +1,6 @@
 import { state } from '../state.js';
 import { proj } from './camera.js';
-import { ctx, poly, shade, drawPrism, onPlaneY } from './gfx.js';
+import { ctx, canvas, poly, shade, drawPrism, onPlaneY } from './gfx.js';
 import { drawFigure, drawMarker, drawLabel } from './figures.js';
 import { drawDeco } from './deco.js';
 import { drawDesk } from './desk.js';
@@ -136,6 +136,13 @@ function drawMemento(o, now) {
   const cx = o.x + o.w / 2, cy = o.y + o.h / 2;
   poly([proj(o.x + 0.1, o.y + 0.1, o.z), proj(o.x + o.w - 0.1, o.y + 0.1, o.z), proj(o.x + o.w - 0.1, o.y + o.h - 0.1, o.z), proj(o.x + 0.1, o.y + o.h - 0.1, o.z)], st === 'locked' ? '#3a3f55' : o.color);
 
+  if (c) { // museum plaque with the year, on the pedestal's front
+    onPlaneY(o.x + 0.1, o.x + o.w - 0.1, o.y + o.h - 0.1, o.z - 0.05, 0.12, 100, 56, () => {
+      ctx.fillStyle = '#10132a'; ctx.fillRect(0, 0, 100, 56);
+      ctx.fillStyle = st === 'locked' ? '#6b7192' : '#ffd166'; ctx.font = '800 34px system-ui'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(String(c.year), 50, 30);
+    });
+  }
   const top = proj(cx, cy, o.z);
   if (st !== 'locked') {
     const a = st === 'open' ? 0.5 + 0.2 * Math.sin(now / 300) : 0.22;
@@ -208,5 +215,37 @@ export function render(now) {
     if (hasPendingTask(o)) { const c = proj(o.x + o.w / 2, o.y + o.h / 2, o.z + 0.2); drawMarker(c.x, c.y - 14 * Z, now); }
   }
   drawParticles();
+  if (world.lighting && world.lighting.mode === 'dark') drawDarkness(now);
   if (hover) drawLabel(hover);
+}
+
+// ---- darkness ("dark" lighting): everything is dim except what the hero's flashlight and light sources reach ----
+let darkLayer = null;
+function drawDarkness(now) {
+  const { world, W, H, Z, hero } = state;
+  const dpr = canvas.width / W;
+  if (!darkLayer) darkLayer = document.createElement('canvas');
+  if (darkLayer.width !== canvas.width || darkLayer.height !== canvas.height) { darkLayer.width = canvas.width; darkLayer.height = canvas.height; }
+  const d = darkLayer.getContext('2d');
+  d.setTransform(dpr, 0, 0, dpr, 0, 0);
+  d.globalCompositeOperation = 'source-over';
+  d.fillStyle = 'rgb(9,9,16)'; d.fillRect(0, 0, W, H);
+  d.globalCompositeOperation = 'lighter';
+  const light = (p, radius, strength) => {
+    const g = d.createRadialGradient(p.x, p.y, radius * 0.08, p.x, p.y, radius);
+    g.addColorStop(0, `rgba(255,248,230,${strength})`); g.addColorStop(0.55, `rgba(255,248,230,${strength * 0.45})`); g.addColorStop(1, 'rgba(255,248,230,0)');
+    d.fillStyle = g; d.fillRect(p.x - radius, p.y - radius, radius * 2, radius * 2);
+  };
+  const flicker = 1 + 0.03 * Math.sin(now / 90);
+  light(proj(hero.x, hero.y, 0.7), world.lighting.radius * 36 * Z * flicker, 1); // the flashlight
+  for (const o of world.objs) { // monitors and glowing objects stay visible from afar, like beacons
+    if (o.sitAt) light(proj(o.x + o.w / 2, o.y + 0.5, o.z + 0.5), 1.5 * 36 * Z, 0.9);
+    else if (o.glow) light(proj(o.x + o.w / 2, o.y + o.h / 2, o.z), 1.6 * 36 * Z, 0.8);
+    if (o.type === 'door' && doorOpen(o) && state.mode === 'chapter') light(proj(o.x + o.w / 2, o.y + o.h, 1), 2 * 36 * Z, 0.9);
+  }
+  ctx.save();
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.globalCompositeOperation = 'multiply';
+  ctx.drawImage(darkLayer, 0, 0);
+  ctx.restore();
 }

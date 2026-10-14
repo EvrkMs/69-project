@@ -8,7 +8,7 @@ import { loadContent } from '../server/content/loader.js';
 function twoHeroes() {
   const base = loadContent();
   const derzko = base.get('derzko');
-  const copy = { meta: { ...derzko.meta, id: 'copy', name: 'Copy', nick: undefined }, chapters: derzko.chapters, home: derzko.home };
+  const copy = { meta: { ...derzko.meta, id: 'copy', name: 'Copy', nick: undefined, unlock: 'sequential' }, chapters: derzko.chapters, home: derzko.home };
   const streamers = new Map([['derzko', derzko], ['copy', copy]]);
   return { streamers, list: () => [...streamers.values()], get: (id) => streamers.get(id) || null };
 }
@@ -47,7 +47,8 @@ test('streamer list and detail', async () => {
   const one = await get('/api/streamers/derzko');
   assert.equal(one.data.hero.name, 'Дерзко');
   assert.equal(one.data.chapters[0].unlocked, true);
-  assert.equal(one.data.chapters[1].unlocked, false);
+  assert.equal(one.data.chapters[1].unlocked, true, 'a museum hero (unlock: free) opens every event');
+  assert.equal((await get('/api/streamers/copy')).data.chapters[1].unlocked, false, 'the default is sequential');
   assert.ok(one.data.chapters.every((c) => c.memento && c.memento.name), 'every chapter exposes its keepsake');
   assert.equal(one.data.home.objects.filter((o) => o.type === 'memento').length, one.data.chapters.length, 'the room has a pedestal per chapter');
   assert.equal((await get('/api/streamers/nobody')).status, 404);
@@ -55,20 +56,20 @@ test('streamer list and detail', async () => {
 
 test('chapters unlock in order and need all tasks', async () => {
   const get = browser();
-  assert.equal((await get('/api/streamers/derzko/chapters/c2')).status, 403, 'locked chapter is not served');
-  const c1 = (await get('/api/streamers/derzko/chapters/c1')).data;
+  assert.equal((await get('/api/streamers/copy/chapters/c2')).status, 403, 'locked chapter is not served');
+  const c1 = (await get('/api/streamers/copy/chapters/c1')).data;
 
-  const partial = await get('/api/streamers/derzko/chapters/c1/complete', { tasks: [allTasks(c1)[0]] });
+  const partial = await get('/api/streamers/copy/chapters/c1/complete', { tasks: [allTasks(c1)[0]] });
   assert.equal(partial.status, 400);
   assert.ok(partial.data.missing.length);
-  assert.equal((await get('/api/streamers/derzko/chapters/c2')).status, 403, 'still locked after a failed attempt');
+  assert.equal((await get('/api/streamers/copy/chapters/c2')).status, 403, 'still locked after a failed attempt');
 
-  const ok = await get('/api/streamers/derzko/chapters/c1/complete', { tasks: allTasks(c1) });
+  const ok = await get('/api/streamers/copy/chapters/c1/complete', { tasks: allTasks(c1) });
   assert.equal(ok.status, 200);
   assert.deepEqual(ok.data.done, ['c1']);
   assert.equal(ok.data.chapters[1].unlocked, true);
-  assert.equal((await get('/api/streamers/derzko/chapters/c2')).status, 200);
-  assert.equal((await get('/api/streamers/derzko/chapters/c3')).status, 403, 'only the next chapter opens');
+  assert.equal((await get('/api/streamers/copy/chapters/c2')).status, 200);
+  assert.equal((await get('/api/streamers/copy/chapters/c3')).status, 403, 'only the next chapter opens');
 });
 
 test('progress is separate per streamer and per session', async () => {
@@ -79,7 +80,7 @@ test('progress is separate per streamer and per session', async () => {
   assert.equal((await a('/api/streamers')).data.find((s) => s.id === 'derzko').done, 1);
 
   const stranger = browser();
-  assert.equal((await stranger('/api/streamers/derzko/chapters/c2')).status, 403, 'another browser starts from scratch');
+  assert.equal((await stranger('/api/streamers/copy/chapters/c2')).status, 403, 'another browser starts from scratch');
 });
 
 test('static files, shared modules and path traversal', async () => {

@@ -13,21 +13,48 @@
         { "kind": "poster", "from": 7.2, "to": 8.4, "z0": 1, "z1": 2.1, "color": "#ff6b9d", "glyph": "★" }
       ]
     },
-    "home": {
+    "hall": {
       "w": 12,
       "h": 9,
       "indoor": true,
+      "floor": ["#2e2a30", "#2a262c"],
+      "wall": "#4a3f55",
+      "start": { "x": 6, "y": 6 },
+      "deco": []
+    },
+    "park": {
+      "w": 14,
+      "h": 9,
+      "indoor": false,
+      "floor": ["#2f4a3a", "#2b4535"],
+      "start": { "x": 6, "y": 7 },
+      "deco": []
+    },
+    "dark": {
+      "w": 12,
+      "h": 9,
+      "indoor": true,
+      "floor": ["#1b1d24", "#181a20"],
+      "wall": "#262a35",
+      "start": { "x": 6, "y": 6 },
+      "lighting": { "mode": "dark", "radius": 3 },
+      "deco": []
+    },
+    "home": {
+      "w": 14,
+      "h": 10,
+      "indoor": true,
       "floor": ["#2b2638", "#272234"],
       "wall": "#413553",
-      "start": { "x": 6, "y": 6 },
+      "start": { "x": 7, "y": 7 },
       "deco": [
-        { "kind": "rug", "x": 4, "y": 3, "w": 4, "h": 4, "color": "#3b3550" },
-        { "kind": "window", "from": 3, "to": 6, "z0": 1, "z1": 2.2 },
+        { "kind": "rug", "x": 5, "y": 3, "w": 4, "h": 4, "color": "#3b3550" },
+        { "kind": "window", "from": 5, "to": 8, "z0": 1, "z1": 2.2 },
         { "kind": "poster", "from": 0.6, "to": 1.8, "z0": 1.1, "z1": 2.1, "color": "#6a3d7a", "glyph": "★" }
       ]
     }
   },
-  "homeSlots": [[2,1], [4,1], [6,1], [10,4], [10,6], [1,4], [1,6]],
+  "homeSlots": [[2,1], [4,1], [6,1], [8,1], [10,1], [12,1], [12,4], [12,6], [1,4], [1,6], [3,8], [10,8]],
   "props": {
     "chair": { "id": "chair", "name": "Стул", "w": 0.8, "h": 0.8, "z": 0.5, "color": "#3a3f55", "type": "prop" }
   }

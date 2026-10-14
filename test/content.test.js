@@ -8,7 +8,7 @@ test('all shipped content (including the template) is valid', () => {
   const registry = loadContent({ includeTemplates: true });
   assert.ok(registry.get('derzko'));
   assert.ok(registry.get('_template'));
-  assert.equal(registry.get('derzko').chapters.length, 5);
+  assert.equal(registry.get('derzko').chapters.length, 12);
 });
 
 test('step shorthand expands to speaker objects', () => {
@@ -122,7 +122,7 @@ test('the hero room gets one pedestal per chapter, an exit, and enough slots', (
   assert.ok(derzko.home.objects.some((o) => o.type === 'portal' && o.to === 'lobby'));
 
   const tooFew = { ...derzko, home: { ...derzko.home, objects: derzko.home.objects.filter((o) => o.type !== 'memento').concat(pedestals.slice(0, 2)) } };
-  assert.match(validateStreamer(tooFew).join('\n'), /pedestals for 5 chapters/);
+  assert.match(validateStreamer(tooFew).join('\n'), /pedestals for 12 chapters/);
 });
 
 test('counter tasks must have enough sub-tasks', () => {
@@ -133,4 +133,8 @@ test('counter tasks must have enough sub-tasks', () => {
 test('ContentError lists every problem', () => {
   const e = new ContentError(['a', 'b']);
   assert.match(e.message, /- a\n - b/);
+});
+
+test('unlock must be free or sequential', () => {
+  assert.match(problems((s) => { s.meta.unlock = 'maybe'; }), /unlock must be "free" or "sequential"/);
 });

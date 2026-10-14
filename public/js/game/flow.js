@@ -27,6 +27,15 @@ function setScene(scene, look) {
   state.particles.length = 0;
 }
 
+// Events are memories: a sepia tint with darker corners, entered and left through a white flash.
+function setFlashback(on) { document.body.classList.toggle('flashback', on); }
+function flash() {
+  const el = $('flash');
+  el.classList.remove('on');
+  void el.offsetWidth; // restart the animation
+  el.classList.add('on');
+}
+
 function updateMenuButton() {
   const b = $('menuBtn');
   b.hidden = state.mode === 'lobby';
@@ -62,11 +71,14 @@ export async function enterHub() {
 
 export async function openLobby() {
   state.streamers = (await streamerApi.list()).data;
+  const wasChapter = state.mode === 'chapter';
   state.mode = 'lobby';
   state.chapter = null;
   state.streamer = LOBBY_STUB;
   document.documentElement.style.removeProperty('--acc');
   setScene(lobbyScene(state.streamers), DEFAULT_LOOK);
+  setFlashback(false);
+  if (wasChapter) flash();
   closeOverlay();
   renderHub();
   updateMenuButton();
@@ -75,11 +87,14 @@ export async function openLobby() {
 export async function openHome(sid) {
   const { status, data } = await streamerApi.get(sid);
   if (status !== 200) return openLobby();
+  const wasChapter = state.mode === 'chapter';
   state.mode = 'home';
   state.chapter = null;
   state.streamer = data;
   document.documentElement.style.setProperty('--acc', data.accent);
   setScene(data.home, data.hero.look);
+  setFlashback(false);
+  if (wasChapter) flash();
   closeOverlay();
   renderHub();
   updateMenuButton();
@@ -117,6 +132,8 @@ export async function startChapter(id, { skipIntro = false } = {}) {
   state.chapter = data;
   state.done = new Set();
   setScene(data.scene, s.hero.look);
+  setFlashback(data.flashback !== false);
+  flash();
   renderQuest();
   updateMenuButton();
   if (skipIntro) return closeOverlay();

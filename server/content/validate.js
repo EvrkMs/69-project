@@ -1,7 +1,7 @@
 // Content validation. Everything here runs at server start and in `npm run validate`, so a typo in
 // content/ fails loudly instead of showing up as a stuck door in the game.
 import { buildGrid, isBlockedTile, findPath, spotGoal } from '../../shared/grid.js';
-import { MODEL_NAMES } from '../../shared/models.js';
+import { MODEL_NAMES, DECO_KINDS, LIGHTING_MODES } from '../../shared/models.js';
 
 const SPEAKERS = new Set(['hero', 'npc', 'fact', 'clip']);
 const EPS = 1e-6;
@@ -39,6 +39,11 @@ function validateSteps(steps, where, sources, produced, errors) {
 function validateScene(sc, p, errors) {
   if (!(sc.w > 0 && sc.h > 0)) { errors.push(`${p}: scene needs w and h`); return false; }
   if (!Array.isArray(sc.floor) || sc.floor.length < 2) errors.push(`${p}: scene.floor needs two colors`);
+  for (const d of sc.deco || []) if (!DECO_KINDS.includes(d.kind)) errors.push(`${p}: unknown deco kind "${d.kind}" (known: ${DECO_KINDS.join(', ')})`);
+  if (sc.lighting) {
+    if (!LIGHTING_MODES.includes(sc.lighting.mode)) errors.push(`${p}: unknown lighting mode "${sc.lighting.mode}"`);
+    else if (!(sc.lighting.radius >= 1 && sc.lighting.radius <= 8)) errors.push(`${p}: lighting.radius must be 1..8 tiles`);
+  }
   const ids = new Set();
   for (const o of sc.objects) {
     const w = `${p} object "${o.id}"`;
@@ -121,6 +126,7 @@ export function validateStreamer({ meta, chapters, home }) {
   const p = `streamer ${meta.id}`;
   for (const k of ['id', 'name', 'tagline', 'disclaimer']) if (!meta[k]) errors.push(`${p}: missing ${k}`);
   if (!meta.hero || !meta.hero.name || !meta.hero.look) errors.push(`${p}: hero needs name and look`);
+  if (meta.unlock !== undefined && !['free', 'sequential'].includes(meta.unlock)) errors.push(`${p}: unlock must be "free" or "sequential"`);
   const sources = meta.sources || {};
   for (const [key, s] of Object.entries(sources)) {
     if (!s.label || !/^https?:\/\//.test(s.url || '')) errors.push(`${p}: source "${key}" needs label and http(s) url`);

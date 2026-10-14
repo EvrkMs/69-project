@@ -17,6 +17,6 @@ export function buildHome(meta, chapters, shared) {
       x: slot[0], y: slot[1], w: 1, h: 1, z: 0.7, color: m.color || '#6a3d7a',
     });
   });
-  scene.objects.push({ id: 'exit', type: 'portal', to: 'lobby', name: 'Выход в коридор', x: 9, y: 0, w: 2, h: 0.3, z: 2, color: meta.accent || '#8a5a2b' });
+  scene.objects.push({ id: 'exit', type: 'portal', to: 'lobby', name: 'Выход в коридор', x: scene.w - 3, y: 0, w: 2, h: 0.3, z: 2, color: meta.accent || '#8a5a2b' });
   return scene;
 }

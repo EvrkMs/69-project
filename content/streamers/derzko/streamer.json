@@ -6,10 +6,19 @@
   "accent": "#ff6b9d",
   "hero": {
     "name": "Дерзко",
-    "look": { "body": "#7b4dff", "hair": "#2b1d14", "skin": "#f1c9a5", "headset": "#ff6b9d" }
+    "look": {
+      "body": "#7b4dff",
+      "hair": "#2b1d14",
+      "skin": "#f1c9a5",
+      "headset": "#ff6b9d"
+    }
   },
   "disclaimer": "Фан-проект. Реплики героя и персонажей вымышлены, факты взяты из открытых источников и подписаны.",
-  "idle": ["У меня уже спина болит.", "Так, а что дальше-то делать?", "Чат, вы тут?"],
+  "idle": [
+    "У меня уже спина болит.",
+    "Так, а что дальше-то делать?",
+    "Чат, вы тут?"
+  ],
   "sources": {
     "blog": {
       "label": "cyber.sports.ru: биография Дерзко",
@@ -43,7 +52,10 @@
       "label": "Respawn: Moral Squad",
       "url": "https://respawn.media/celebrities/da27b-novyy-skvad-na-tviche-danya-kashin-otkryl-moral-squad"
     },
-    "lida": { "label": "Рувики: Lida", "url": "https://ru.ruwiki.ru/wiki/Lida" },
+    "lida": {
+      "label": "Рувики: Lida",
+      "url": "https://ru.ruwiki.ru/wiki/Lida"
+    },
     "lidastream": {
       "label": "Respawn: стрим Lida",
       "url": "https://respawn.media/celebrities/h0424-serega-pirat-provedet-strim-s-lida-v-chest-iubileia-pesni-chsv-i-vot-kogda"
@@ -56,7 +68,10 @@
       "label": "TwitchTracker: эфиры Deepins (неофициально)",
       "url": "https://twitchtracker.com/deepins02/streams"
     },
-    "site": { "label": "derzko69.ru", "url": "https://derzko69.ru/" },
+    "site": {
+      "label": "derzko69.ru (фанатский сайт-архив, не сайт героя)",
+      "url": "https://derzko69.ru/"
+    },
     "slay": {
       "label": "esports.ru: премия SLAY 2025",
       "url": "https://esports.ru/news/stal-izvesten-spisok-dopolnitelnykh-nominaczij-premii-slay-2025/"
@@ -72,7 +87,33 @@
     "songs": {
       "label": "Taverna: биография и песни",
       "url": "https://taverna.gg/streaming/guides/biografiya-strimera-derzko69-rost-vozrast-i-vse-pesni/"
+    },
+    "tg4790": {
+      "label": "Telegram Дерзко: правила аукциона, пост 4790",
+      "url": "https://t.me/gigaderzko69/4790"
+    },
+    "tg4819": {
+      "label": "Telegram Дерзко: итог игрового аукциона, пост 4819",
+      "url": "https://t.me/gigaderzko69/4819"
+    },
+    "tg4782": {
+      "label": "Telegram Дерзко: конкурс косплея, пост 4782",
+      "url": "https://t.me/gigaderzko69/4782"
     }
   },
-  "chapters": ["c1-first-room", "c2-pandemic", "c3-street", "c4-shpana", "c5-now"]
+  "chapters": [
+    "c1-first-room",
+    "c2-pandemic",
+    "c3-pullups",
+    "c4-auction",
+    "c5-100k",
+    "c6-shpana",
+    "c7-cosplay",
+    "c8-wedding",
+    "c9-summer",
+    "c10-restaurant",
+    "c11-darkness",
+    "c12-now"
+  ],
+  "unlock": "free"
 }
