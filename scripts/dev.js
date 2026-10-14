@@ -24,7 +24,8 @@ function snapshot() {
 
 let child = null;
 const start = () => {
-  child = spawn(process.execPath, [path.join(root, 'server', 'index.js')], { stdio: 'inherit', env: process.env });
+  // `npm run dev` is the local-development entry point, so plain-http cookies are allowed here (and only here by default)
+  child = spawn(process.execPath, [path.join(root, 'server', 'index.js')], { stdio: 'inherit', env: { ARCH69_DEV: '1', ...process.env } });
   child.on('exit', (code) => { if (code) console.log(`[dev] server exited (${code}), waiting for changes...`); });
 };
 

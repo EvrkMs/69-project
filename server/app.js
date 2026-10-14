@@ -26,7 +26,6 @@ export function createApp({ registry = loadContent(), config = loadConfig() } = 
   ];
 
   async function handle(req, res) {
-    const secure = isSecure(req, config);
     if (!req.url || req.url.length > config.maxUrlLength) throw new HttpError(414, 'uri_too_long');
     if (!req.url.startsWith('/')) throw new HttpError(400, 'bad_request');
     if (!hostAllowed(req, config.allowedHosts)) throw new HttpError(421, 'bad_host');
@@ -43,7 +42,7 @@ export function createApp({ registry = loadContent(), config = loadConfig() } = 
     if (req.method === 'POST' && !sameOrigin(req)) throw new HttpError(403, 'cross_origin');
 
     if (isApi) {
-      const ctx = requestContext(req, { secure });
+      const ctx = requestContext(req, config);
       if (!(await api(req, res, url, ctx))) json(res, 404, { error: 'not_found' }, ctx.headers());
       return;
     }

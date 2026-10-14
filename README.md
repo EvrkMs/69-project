@@ -25,7 +25,9 @@ wsl -d claude -e bash -lc "cd /mnt/g/evrk_repo/69-project && npm run dev"
 
 Файлы `public/` перезапуска не требуют, достаточно обновить страницу. Переменные: `PORT`, `CONTENT_ROOT` (другая папка
 контента, например для черновиков), `ARCH69_SECRET` (ключ подписи, не короче 32 байт; по умолчанию создаётся в `.secret`),
-`HOST` (по умолчанию `127.0.0.1`), `ALLOWED_HOSTS`, `TRUST_PROXY`, `COOKIE_SECURE`, `RATE_API`/`RATE_POST`/`RATE_STATIC`.
+`HOST` (по умолчанию `127.0.0.1`), `ALLOWED_HOSTS`, `TRUST_PROXY`, `ARCH69_DEV`, `RATE_API`/`RATE_POST`/`RATE_STATIC`.
+**Куки работают только по HTTPS** (`Secure` и префикс `__Host-`), пока не включён `ARCH69_DEV=1`: `npm run dev` включает его сам,
+для `npm start` и для локального Docker по http нужно задать `ARCH69_DEV=1` вручную. На публичном сервере не задавать.
 Модель угроз, список мер с привязкой к коду и тестам и чек-лист развёртывания: [SECURITY.md](SECURITY.md).
 
 ## Структура

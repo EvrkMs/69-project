@@ -13,5 +13,15 @@ export function parseCookies(header = '') {
   return out;
 }
 
-/** Cookie attributes: invisible to scripts, not sent cross-site on POST, HTTPS-only when the connection is secure. */
-export const cookieAttrs = (secure) => `; Path=/; HttpOnly; SameSite=Lax; Max-Age=31536000${secure ? '; Secure' : ''}`;
+/**
+ * Cookie policy. Production: HTTPS only. `Secure` makes browsers refuse to send them over plain http, and the `__Host-`
+ * prefix makes browsers refuse any cookie of that name that is not Secure, has a Domain, or a Path other than "/"
+ * (so a sibling subdomain cannot plant a session cookie). Dev mode (ARCH69_DEV=1) drops both so plain http works.
+ */
+export function cookiePolicy(config) {
+  const prefix = config.dev ? '' : '__Host-';
+  return {
+    names: { session: `${prefix}session`, cp: `${prefix}cp` },
+    attrs: `; Path=/; HttpOnly; SameSite=Lax; Max-Age=31536000${config.dev ? '' : '; Secure'}`,
+  };
+}

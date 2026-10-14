@@ -16,8 +16,9 @@ export function loadConfig(env = process.env) {
     allowedHosts: list(env.ALLOWED_HOSTS, ['localhost', '127.0.0.1', '[::1]']),
     // Set when running behind a reverse proxy that terminates TLS and sets X-Forwarded-* (never otherwise: they are spoofable).
     trustProxy: env.TRUST_PROXY === '1',
-    // Force the Secure cookie flag (and HSTS) even if the request looks like plain http.
-    secureCookies: env.COOKIE_SECURE === '1',
+    // Development switch. Without it, cookies are HTTPS-only (Secure + __Host- prefix). With it, cookies also work over plain
+    // http so a local run or a local Docker container is usable. Never set it on a public deployment.
+    dev: env.ARCH69_DEV === '1',
     maxBodyBytes: 2048,
     maxUrlLength: 2048,
     // Requests per window and client address.

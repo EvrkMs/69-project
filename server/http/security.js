@@ -43,8 +43,9 @@ function hostname(host = '') {
 
 export const hostAllowed = (req, allowed) => allowed.includes(hostname(req.headers.host));
 
+/** Is this particular request arriving over HTTPS (directly, or via a trusted TLS-terminating proxy)? Drives HSTS only. */
 export const isSecure = (req, config) =>
-  config.secureCookies || !!req.socket.encrypted || (config.trustProxy && req.headers['x-forwarded-proto'] === 'https');
+  !!req.socket.encrypted || (config.trustProxy && req.headers['x-forwarded-proto'] === 'https');
 
 export function clientAddress(req, config) {
   if (config.trustProxy) {

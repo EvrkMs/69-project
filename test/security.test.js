@@ -76,31 +76,62 @@ test('the CSP allows no inline code, no wildcards, and framing only by YouTube a
   assert.match(CSP, /frame-src https:\/\/www\.youtube-nocookie\.com https:\/\/clips\.twitch\.tv(;|$)/);
 });
 
-test('cookies are HttpOnly and SameSite; Secure and HSTS appear when the deployment is HTTPS', async () => {
+test('cookies are HTTPS-only by default: Secure, HttpOnly, SameSite and the __Host- prefix', async () => {
   await withServer({}, async (port) => {
     const r = await raw(port, { path: '/api/streamers' });
     const cookies = [].concat(r.headers['set-cookie']);
     assert.equal(cookies.length, 2, 'session + checkpoint');
+    assert.deepEqual(cookies.map((c) => c.split('=')[0]).sort(), ['__Host-cp', '__Host-session']);
     for (const c of cookies) {
+      assert.match(c, /; Secure/);
       assert.match(c, /; HttpOnly/);
       assert.match(c, /; SameSite=Lax/);
-      assert.doesNotMatch(c, /; Secure/, 'plain-http development must still work');
+      assert.match(c, /; Path=\//, '__Host- requires Path=/');
+      assert.doesNotMatch(c, /; Domain=/i, '__Host- forbids a Domain attribute');
     }
-    assert.equal(r.headers['strict-transport-security'], undefined);
   });
-  await withServer({ secureCookies: true }, async (port) => {
-    const r = await raw(port, { path: '/api/streamers' });
-    for (const c of [].concat(r.headers['set-cookie'])) assert.match(c, /; Secure/);
-    assert.match(r.headers['strict-transport-security'], /max-age=31536000/);
-    assert.match(r.headers['content-security-policy'], /upgrade-insecure-requests/);
+});
+
+test('ARCH69_DEV=1 is the only way to get cookies that also work over plain http', async () => {
+  assert.equal(loadConfig({}).dev, false);
+  assert.equal(loadConfig({ ARCH69_DEV: '1' }).dev, true);
+  for (const v of ['true', 'yes', '0', '', 'on']) assert.equal(loadConfig({ ARCH69_DEV: v }).dev, false, `"${v}" does not enable dev`);
+
+  await withServer({ dev: true }, async (port) => {
+    const cookies = [].concat((await raw(port, { path: '/api/streamers' })).headers['set-cookie']);
+    assert.deepEqual(cookies.map((c) => c.split('=')[0]).sort(), ['cp', 'session']);
+    for (const c of cookies) {
+      assert.doesNotMatch(c, /; Secure/);
+      assert.match(c, /; HttpOnly/);
+      assert.match(c, /; SameSite=Lax/);
+    }
   });
+});
+
+test('a cookie planted under the dev name is ignored by a production-mode server', async () => {
+  await withServer({ dev: true }, async (devPort) => {
+    const dev = await raw(devPort, { path: '/api/streamers' });
+    const plain = [].concat(dev.headers['set-cookie']).map((c) => c.split(';')[0]).join('; '); // "session=...; cp=..."
+    await withServer({}, async (port) => {
+      const r = await raw(port, { path: '/api/streamers', headers: { cookie: plain } });
+      assert.equal(r.status, 200);
+      assert.match([].concat(r.headers['set-cookie']).join(' '), /__Host-session=/, 'treated as a new visitor, a fresh __Host- cookie is issued');
+    });
+  });
+});
+
+test('HSTS and upgrade-insecure-requests appear only for requests that really arrive over HTTPS', async () => {
   await withServer({ trustProxy: true }, async (port) => {
-    const behindProxy = await raw(port, { path: '/api/streamers', headers: { 'x-forwarded-proto': 'https' } });
-    assert.match([].concat(behindProxy.headers['set-cookie'])[0], /; Secure/, 'proxy says https and is trusted');
+    const viaProxy = await raw(port, { path: '/api/streamers', headers: { 'x-forwarded-proto': 'https' } });
+    assert.match(viaProxy.headers['strict-transport-security'], /max-age=31536000/);
+    assert.match(viaProxy.headers['content-security-policy'], /upgrade-insecure-requests/);
+    const plain = await raw(port, { path: '/api/streamers' });
+    assert.equal(plain.headers['strict-transport-security'], undefined);
+    assert.doesNotMatch(plain.headers['content-security-policy'], /upgrade-insecure-requests/, 'would break plain-http local use');
   });
   await withServer({}, async (port) => {
     const spoofed = await raw(port, { path: '/api/streamers', headers: { 'x-forwarded-proto': 'https' } });
-    assert.doesNotMatch([].concat(spoofed.headers['set-cookie'])[0], /; Secure/, 'forwarded headers are ignored unless TRUST_PROXY is set');
+    assert.equal(spoofed.headers['strict-transport-security'], undefined, 'forwarded headers are ignored unless TRUST_PROXY is set');
   });
 });
 

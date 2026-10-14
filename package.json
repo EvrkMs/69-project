@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node server/index.js",
     "dev": "node scripts/dev.js",
-    "dev:watch": "node --watch --watch-path=server --watch-path=shared --watch-path=content server/index.js",
+    "dev:watch": "ARCH69_DEV=1 node --watch --watch-path=server --watch-path=shared --watch-path=content server/index.js",
     "validate": "node scripts/validate-content.js",
     "test": "node --test \"test/*.test.js\""
   },
