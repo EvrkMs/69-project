@@ -3,14 +3,16 @@ import { renderQuest } from './quest.js';
 import { showAction, cancelAction } from './action.js';
 import { checkCounters } from '../game/tasks.js';
 import { sfx } from '../audio/sound.js';
+import { speakerFor } from './bubble.js';
 
-// Hero / NPC lines go to the bottom window; facts and clips go to a card at the top centre.
+// Hero / NPC lines float in a bubble above the speaker (see bubble.js); facts and clips go to a card at the top centre.
 // Two step kinds are not dialogue: "action" waits for a held button, "task" completes a task and moves on.
 let typer = null;
 
-export function say(steps, onDone) {
+/** `spoken` is the object the player is talking to (an NPC's lines are anchored to it). */
+export function say(steps, onDone, spoken = null) {
   document.body.classList.add('talking');
-  state.dlg = { steps, i: 0, onDone };
+  state.dlg = { steps, i: 0, onDone, spoken, speaker: null, shown: 0 };
   showStep();
 }
 
@@ -47,6 +49,7 @@ function showStep() {
     showMedia(s.media);
   } else {
     el = $('dtext');
+    dlg.speaker = speakerFor(s, dlg.spoken);
     $('dialog').className = s.who === 'npc' ? 'npc' : '';
     $('dname').textContent = s.who === 'hero' ? streamer.hero.name : s.name || '';
     showMedia(null);
@@ -56,15 +59,29 @@ function showStep() {
   const voice = s.who === 'hero' ? 'hero' : s.who === 'npc' ? 'npc' : null;
   let n = 0;
   clearInterval(typer);
-  el.textContent = '';
+  dlg.el = el;
+  dlg.full = text;
+  dlg.shown = 0;
+  paint(el, text, 0, !card);
   typer = setInterval(() => {
     n += 2;
     if (voice && n % 6 === 0) sfx(voice); // a blip every third letter
-    el.textContent = text.slice(0, n);
+    dlg.shown = Math.min(n, text.length);
+    paint(el, text, dlg.shown, !card);
     if (n >= text.length) clearInterval(typer);
   }, 16);
-  dlg.el = el;
-  dlg.full = text;
+}
+
+/**
+ * Shows the first n letters. In a bubble the rest is kept in the layout, invisible, so the bubble has its final size from the
+ * first letter and doesn't grow and jump while the line is typed.
+ */
+function paint(el, text, n, reserve) {
+  if (!reserve) { el.textContent = text.slice(0, n); return; }
+  const rest = document.createElement('span');
+  rest.className = 'ghost';
+  rest.textContent = text.slice(n);
+  el.replaceChildren(text.slice(0, n), rest);
 }
 
 function next() {
@@ -85,7 +102,7 @@ function next() {
 export function advance() {
   const { dlg } = state;
   if (!dlg || dlg.waiting) return;
-  if (dlg.el.textContent.length < dlg.full.length) { clearInterval(typer); dlg.el.textContent = dlg.full; return; }
+  if (dlg.shown < dlg.full.length) { clearInterval(typer); dlg.shown = dlg.full.length; paint(dlg.el, dlg.full, dlg.shown, dlg.el === $('dtext')); return; }
   sfx('next');
   next();
 }

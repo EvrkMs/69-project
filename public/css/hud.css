@@ -18,11 +18,11 @@
 #qhint { margin-top:8px; font-size:12px; color:var(--dim); white-space:pre-line; }
 
 #menuBtn { position:fixed; right:16px; top:16px; }
-#soundBtn { position:fixed; right:16px; top:60px; z-index:5; width:40px; height:40px; padding:0; border-radius:50%; font-size:18px; line-height:1; }
+#soundBtn { position:fixed; right:16px; top:60px; z-index:3; width:40px; height:40px; padding:0; border-radius:50%; font-size:18px; line-height:1; }
 
 #prompt { position:fixed; left:50%; bottom:190px; transform:translateX(-50%); background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:6px 12px; pointer-events:none; }
 
-#whisper { position:fixed; left:50%; bottom:28px; transform:translateX(-50%); max-width:min(520px, calc(100vw - 24px)); background:var(--panel); border:1px solid var(--line); border-radius:999px; padding:8px 18px; font-style:italic; }
+#whisper { position:fixed; left:0; top:0; z-index:3; width:max-content; max-width:min(300px, calc(100vw - 16px)); background:var(--panel); border:2px solid var(--line); border-radius:14px; padding:6px 12px; font-style:italic; pointer-events:none; }
 #whisper b { color:var(--acc); font-style:normal; margin-right:6px; }
 
 /* Touch controls (shown only on touch devices, or with ?touch=1) */
@@ -47,12 +47,21 @@
 @media (pointer: coarse), (max-width: 600px), (max-height: 500px) {
   body.talking #quest { display:none; }
   #qtasks { max-height:calc(100vh - 250px); min-height:3em; }
-  #whisper { bottom:240px; }
+}
+
+/* Phones held sideways (16:9 and wider): little height, lots of width. The scene gets all of it; the stick and E sit in the bottom
+   corners, the prompt and the hold button in the free strip between them, and a clip card puts its video beside the text. */
+@media (max-height: 500px) {
+  #prompt { bottom:14px; }
+  #action { bottom:10px; }
+  #abtn { width:92px; height:92px; }
+  #ahint { display:none; }
+  #stick { width:128px; height:128px; left:14px; bottom:14px; }
+  #knob { width:54px; height:54px; margin:-27px 0 0 -27px; }
+  #ebtn { width:64px; height:64px; right:16px; bottom:22px; }
+  #hud { display:none; }
 }
 @media (pointer: coarse) and (orientation: portrait), (max-width: 600px) and (orientation: portrait) {
-  body #dialog { top:96px; bottom:auto; min-height:120px; } /* body: beats dialog.css, which loads later */
-  body #fact { top:96px; max-height:calc(100vh - 110px); }
-  #whisper { top:96px; bottom:auto; }
   #prompt { bottom:200px; }
 }
 

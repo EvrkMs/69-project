@@ -10,6 +10,7 @@ import { enterHub, onMenu } from './game/flow.js';
 import { initAudio } from './audio/sound.js';
 import { initSoundButton } from './ui/soundbtn.js';
 import { initQuest } from './ui/quest.js';
+import { positionBubbles } from './ui/bubble.js';
 
 resize();
 addEventListener('resize', resize);
@@ -28,6 +29,7 @@ function frame(now) {
   last = now;
   if (state.world) update(dt, now);
   render(now);
+  positionBubbles();
   requestAnimationFrame(frame);
 }
 

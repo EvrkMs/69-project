@@ -25,7 +25,7 @@ export function interact(o) {
   }
 
   if (o.type === 'door') {
-    if (!doorOpen(o)) return say(o.locked);
+    if (!doorOpen(o)) return say(o.locked, null, o);
     return say(o.steps, () => {
       if (o.task) done.add(o.task);
       // the door swings open and floods with light before the chapter ends
@@ -33,7 +33,7 @@ export function interact(o) {
       sfx('door');
       state.locked = true;
       setTimeout(() => { state.locked = false; finishChapter(); }, 750);
-    });
+    }, o);
   }
 
   const it = pickInteraction(o);
@@ -51,5 +51,5 @@ export function interact(o) {
       stopStream();
       if (!blockedAt(hero.x, hero.y + 0.8)) hero.y += 0.8; // stand up in front of the chair
     }
-  });
+  }, o);
 }
