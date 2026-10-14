@@ -5,6 +5,8 @@ import { MODEL_NAMES } from '../../shared/models.js';
 
 const SPEAKERS = new Set(['hero', 'npc', 'fact', 'clip']);
 const EPS = 1e-6;
+const MEDIA_TOKEN = /^[\w-]{6,64}$/;
+const MAX_TEXT = 1200;
 
 function validateSteps(steps, where, sources, produced, errors) {
   if (!Array.isArray(steps) || !steps.length) { errors.push(`${where}: no steps`); return; }
@@ -26,8 +28,10 @@ function validateSteps(steps, where, sources, produced, errors) {
     if (s.who === 'clip') {
       const m = s.media;
       if (!m || !m.title) errors.push(`${at}: clip without media/title`);
-      else if (m.type === 'youtube' ? !m.id : m.type === 'twitchclip' ? !m.slug : true) errors.push(`${at}: bad clip media ${JSON.stringify(m)}`);
+      // ids go into iframe URLs: only the plain id alphabet is accepted, so nothing can break out of the URL
+      else if (!['youtube', 'twitchclip'].includes(m.type) || !MEDIA_TOKEN.test(m.type === 'youtube' ? m.id : m.slug)) errors.push(`${at}: bad clip media ${JSON.stringify(m)}`);
     }
+    if (typeof s.text === 'string' && s.text.length > MAX_TEXT) errors.push(`${at}: text is longer than ${MAX_TEXT} characters`);
   });
 }
 

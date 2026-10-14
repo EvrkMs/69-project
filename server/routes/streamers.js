@@ -6,7 +6,7 @@ import { isUnlocked, chapterIndex, missingTasks, streamerSummary } from '../cont
 // GET  /api/streamers/:sid                             one hero: look, sources, chapters with unlock state
 // GET  /api/streamers/:sid/chapters/:cid               full chapter (scene, dialogue); 403 while locked
 // POST /api/streamers/:sid/chapters/:cid/complete      body { tasks: [...] }; unlocks the next chapter
-export function streamerRoutes(registry) {
+export function streamerRoutes(registry, config) {
   return async (req, res, url, ctx) => {
     const H = ctx.headers;
     const parts = url.pathname.split('/').filter(Boolean); // ['api','streamers',...]
@@ -41,8 +41,10 @@ export function streamerRoutes(registry) {
         return true;
       }
       if (parts.length === 6 && parts[5] === 'complete' && req.method === 'POST') {
-        const body = await readJsonBody(req);
-        const missing = missingTasks(chapter, body.tasks);
+        const body = await readJsonBody(req, config.maxBodyBytes);
+        // only a short list of short strings is meaningful; anything else is ignored rather than trusted
+        const reported = Array.isArray(body.tasks) ? body.tasks.slice(0, 64).filter((t) => typeof t === 'string' && t.length <= 40) : [];
+        const missing = missingTasks(chapter, reported);
         if (missing.length) { json(res, 400, { error: 'tasks_incomplete', missing }, H()); return true; }
         markDone(ctx.state, streamer.meta.id, chapter.id);
         ctx.save();

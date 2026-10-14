@@ -39,7 +39,7 @@ function showStep() {
     $('flabel').textContent = s.who === 'fact' ? 'ФАКТ' : 'КЛИП';
     const src = streamer.sources[s.src];
     const link = $('fsrc');
-    if (s.who === 'fact' && src) { link.href = src.url; link.textContent = src.label; link.hidden = false; } else link.hidden = true;
+    if (s.who === 'fact' && src && /^https?:\/\//.test(src.url)) { link.href = src.url; link.textContent = src.label; link.hidden = false; } else link.hidden = true;
     showMedia(s.media);
   } else {
     el = $('dtext');
@@ -91,17 +91,44 @@ export function closeDialog() {
 }
 
 // Embedded clip inside the fact card. Always offers a plain link too (embedding can be disabled by the uploader).
+// Built with DOM calls, not HTML strings; the id is re-checked and URL-encoded even though the server validated it;
+// the frame is sandboxed to what a video player needs, and CSP (frame-src) allows only YouTube and Twitch.
+const MEDIA_TOKEN = /^[\w-]{6,64}$/;
+const SANDBOX = 'allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox';
+
+function text(tag, className, content) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  node.textContent = content;
+  return node;
+}
+
 function showMedia(m) {
   const el = $('fmedia');
-  if (!m) { el.hidden = true; el.innerHTML = ''; return; }
-  const link = m.type === 'youtube' ? `https://www.youtube.com/watch?v=${m.id}` : `https://clips.twitch.tv/${m.slug}`;
+  el.replaceChildren();
+  const token = m && (m.type === 'youtube' ? m.id : m.type === 'twitchclip' ? m.slug : null);
+  if (!token || !MEDIA_TOKEN.test(token)) { el.hidden = true; return; }
+
+  const id = encodeURIComponent(token);
+  const link = m.type === 'youtube' ? `https://www.youtube.com/watch?v=${id}` : `https://clips.twitch.tv/${id}`;
   const src = m.type === 'youtube'
-    ? `https://www.youtube-nocookie.com/embed/${m.id}?rel=0`
-    : `https://clips.twitch.tv/embed?clip=${m.slug}&parent=${location.hostname}&autoplay=false`;
-  el.innerHTML = `<iframe src="${src}" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
-    <div class="cap"><span></span><a href="${link}" target="_blank" rel="noopener">Открыть оригинал</a></div>
-    <div class="note">Нарезка и права принадлежат авторам ролика.</div>`;
-  el.querySelector('.cap span').textContent = m.title;
+    ? `https://www.youtube-nocookie.com/embed/${id}?rel=0`
+    : `https://clips.twitch.tv/embed?clip=${id}&parent=${encodeURIComponent(location.hostname)}&autoplay=false`;
+
+  const frame = document.createElement('iframe');
+  frame.src = src;
+  frame.loading = 'lazy';
+  frame.allowFullscreen = true;
+  frame.referrerPolicy = 'strict-origin-when-cross-origin';
+  frame.setAttribute('sandbox', SANDBOX);
+
+  const open = text('a', '', 'Открыть оригинал');
+  open.href = link; open.target = '_blank'; open.rel = 'noopener noreferrer';
+  const caption = document.createElement('div');
+  caption.className = 'cap';
+  caption.append(text('span', '', String(m.title)), open);
+
+  el.append(frame, caption, text('div', 'note', 'Нарезка и права принадлежат авторам ролика.'));
   el.hidden = false;
 }
 

@@ -146,7 +146,7 @@ export async function finishChapter() {
 
 function showEnding() {
   const s = state.streamer;
-  const links = Object.values(s.sources).map((x) => `<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.label)}</a>`).join('<br>');
+  const links = Object.values(s.sources).map((x) => `<a href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">${esc(x.label)}</a>`).join('<br>');
   overlay(`
     <h1><small>КОНЕЦ ИСТОРИИ</small>Спасибо, что дошёл до конца</h1>
     <p>История продолжается. Герой всё ещё в эфире.</p>

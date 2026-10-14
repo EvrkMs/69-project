@@ -1,3 +1,4 @@
+process.env.ARCH69_SECRET ||= 'test-secret-'.padEnd(48, 'x'); // keep tests from touching the real .secret
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { signCheckpoint, readCheckpoint, freshState, markDone, doneChapters } from '../server/auth/checkpoint.js';
@@ -30,7 +31,7 @@ test('a checkpoint from another session or with a tampered payload is ignored', 
 
 test('legacy v2 progress migrates to Derzko, the only hero at that time', () => {
   const payload = b64u(JSON.stringify({ v: 2, ch: ['c1', 'c2'] }));
-  const migrated = readCheckpoint('sid-1', `${payload}.${hmac('cp', 'sid-1', payload)}`);
+  const migrated = readCheckpoint('sid-1', `${payload}.${hmac('checkpoint', 'sid-1', payload)}`);
   assert.deepEqual(doneChapters(migrated, 'derzko'), ['c1', 'c2']);
 });
 

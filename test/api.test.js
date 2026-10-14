@@ -1,3 +1,4 @@
+process.env.ARCH69_SECRET ||= 'test-secret-'.padEnd(48, 'x'); // keep tests from touching the real .secret
 import test, { before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { createApp } from '../server/app.js';
