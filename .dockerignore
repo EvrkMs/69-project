@@ -1,0 +1,8 @@
+.git
+.claude
+.secret
+.env
+node_modules
+test
+archive
+*.log

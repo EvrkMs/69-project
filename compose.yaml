@@ -1,0 +1,25 @@
+# Production: the app sits behind caddy-docker-proxy, which reads the labels below, issues the certificate and proxies to
+# the container. Needs an existing external network shared with Caddy (name: CADDY_NETWORK, default "caddy").
+name: arch69
+
+services:
+  app:
+    build: .
+    image: arch69-project:latest
+    restart: unless-stopped
+    environment:
+      ARCH69_SECRET: ${ARCH69_SECRET:?set ARCH69_SECRET in .env (at least 32 bytes, see .env.example)}
+      ALLOWED_HOSTS: ${DOMAIN:-69-project.ava-kk.ru}
+      TRUST_PROXY: "1"            # TLS ends at Caddy, which sets X-Forwarded-*
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    networks: [caddy]
+    labels:
+      caddy: ${DOMAIN:-69-project.ava-kk.ru}
+      caddy.reverse_proxy: "{{upstreams 3069}}"
+
+networks:
+  caddy:
+    name: ${CADDY_NETWORK:-caddy}
+    external: true

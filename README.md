@@ -30,6 +30,22 @@ wsl -d claude -e bash -lc "cd /mnt/g/evrk_repo/69-project && npm run dev"
 `HOST` (по умолчанию `127.0.0.1`), `ALLOWED_HOSTS`, `TRUST_PROXY`, `ARCH69_DEV`, `RATE_API`/`RATE_POST`/`RATE_STATIC`.
 **Куки работают только по HTTPS** (`Secure` и префикс `__Host-`), пока не включён `ARCH69_DEV=1`: `npm run dev` включает его сам,
 для `npm start` и для локального Docker по http нужно задать `ARCH69_DEV=1` вручную. На публичном сервере не задавать.
+## Деплой (Docker, Caddy, docker context)
+
+`compose.yaml` рассчитан на [caddy-docker-proxy](https://github.com/lucaslorentz/caddy-docker-proxy): Caddy читает метки `caddy` и
+`caddy.reverse_proxy` с контейнера, сам выпускает сертификат и проксирует на порт 3069. Домен: `69-project.ava-kk.ru` (переменная `DOMAIN`).
+Контейнер подключается к внешней сети Caddy (`caddy` по умолчанию, меняется `CADDY_NETWORK`), порты наружу не публикуются,
+файловая система только для чтения, все capabilities сброшены, `TRUST_PROXY=1`, `ALLOWED_HOSTS` равен домену.
+
+```bash
+cp .env.example .env            # вписать ARCH69_SECRET: openssl rand -hex 32
+docker context create prod --docker "host=ssh://user@server"   # один раз
+scripts/deploy.sh prod          # проверки, затем docker --context prod compose up -d --build
+scripts/deploy.sh prod down     # остановить
+```
+
+Образ собирается на удалённом движке (передаются только исходники), сборка падает, если контент не проходит валидацию.
+
 Модель угроз, список мер с привязкой к коду и тестам и чек-лист развёртывания: [SECURITY.md](SECURITY.md).
 
 ## Структура

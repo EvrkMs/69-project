@@ -3,3 +3,4 @@ node_modules/
 .secret
 .claude/settings.local.json
 *.log
+.env
