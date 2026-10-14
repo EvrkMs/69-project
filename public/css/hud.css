@@ -1,0 +1,37 @@
+/* In-game HUD: quest list, menu button, interaction prompt, idle whisper, stream chat. */
+#quest { position:fixed; left:16px; top:16px; width:min(280px, calc(100vw - 32px)); background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:12px 14px; }
+#qtitle { font-weight:700; color:var(--acc); margin-bottom:6px; }
+#qtasks { list-style:none; margin:0; padding:0; }
+#qtasks li { padding:2px 0; color:var(--fg); }
+#qtasks li::before { content:"○ "; color:var(--dim); }
+#qtasks li.done { color:var(--dim); text-decoration:line-through; }
+#qtasks li.done::before { content:"● "; color:var(--acc2); }
+#qtasks li.exit { color:#7bd88f; font-weight:700; animation:blink 1.2s infinite; }
+#qtasks li.exit::before { content:"➜ "; color:#7bd88f; }
+#qtasks li.locked { color:var(--dim); }
+#qtasks li.locked::before { content:"🔒 "; }
+#qhint { margin-top:8px; font-size:12px; color:var(--dim); white-space:pre-line; }
+
+#menuBtn { position:fixed; right:16px; top:16px; }
+
+#prompt { position:fixed; left:50%; bottom:190px; transform:translateX(-50%); background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:6px 12px; pointer-events:none; }
+
+#whisper { position:fixed; left:50%; bottom:28px; transform:translateX(-50%); max-width:min(520px, calc(100vw - 24px)); background:var(--panel); border:1px solid var(--line); border-radius:999px; padding:8px 18px; font-style:italic; }
+#whisper b { color:var(--acc); font-style:normal; margin-right:6px; }
+
+/* Touch controls (shown only on touch devices, or with ?touch=1) */
+#touch button { touch-action:none; -webkit-user-select:none; opacity:.9; }
+#dpad { position:fixed; left:16px; bottom:24px; z-index:3; display:grid; grid-template-columns:repeat(3, 56px); grid-template-rows:repeat(3, 56px); gap:6px; }
+#dpad button { padding:0; font-size:20px; border-radius:14px; }
+#dpad [data-k="w"] { grid-area:1 / 2; } #dpad [data-k="a"] { grid-area:2 / 1; }
+#dpad [data-k="s"] { grid-area:3 / 2; } #dpad [data-k="d"] { grid-area:2 / 3; }
+#ebtn { position:fixed; right:20px; bottom:44px; z-index:3; width:76px; height:76px; padding:0; border-radius:50%; font-size:26px; font-weight:800; border-color:var(--acc); }
+@media (max-width: 480px) { #quest { width:min(220px, calc(100vw - 140px)); } }
+
+/* Stream HUD: shown while the hero is live at the PC */
+#hud { position:fixed; left:16px; bottom:190px; width:min(270px, calc(100vw - 32px)); background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:8px 10px; pointer-events:none; }
+#hudtop { display:flex; justify-content:space-between; font-weight:700; margin-bottom:6px; }
+#hudtop .live { color:#ff3b3b; animation:blink 1s infinite; }
+#hchat { display:flex; flex-direction:column; gap:2px; font-size:13px; min-height:60px; }
+#hchat div { animation:pop .25s ease-out; }
+@keyframes pop { from { opacity:0; transform:translateY(6px); } }

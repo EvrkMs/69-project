@@ -1,0 +1,15 @@
+{
+  "name": "arch69-project",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Interactive stories about streamers: walk through rooms, talk to people, learn sourced facts",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node scripts/dev.js",
+    "dev:watch": "node --watch --watch-path=server --watch-path=shared --watch-path=content server/index.js",
+    "validate": "node scripts/validate-content.js",
+    "test": "node --test \"test/*.test.js\""
+  },
+  "engines": { "node": ">=20" }
+}

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Истории стримеров</title>
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/hud.css">
+<link rel="stylesheet" href="/css/dialog.css">
+<link rel="stylesheet" href="/css/overlay.css">
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div id="quest" hidden>
+  <div id="qtitle"></div>
+  <ul id="qtasks"></ul>
+  <div id="qhint">ЛКМ: идти и говорить · WASD: двигаться · E: действие</div>
+</div>
+<button id="menuBtn" hidden>Главы</button>
+<div id="prompt" hidden></div>
+
+<div id="fact" hidden>
+  <div id="flabel"></div>
+  <div id="ftext"></div>
+  <div id="fmedia" hidden></div>
+  <div id="ffoot"><a id="fsrc" target="_blank" rel="noopener" hidden>источник</a><button id="fnext" class="primary">Понятно</button></div>
+</div>
+<div id="hud" hidden>
+  <div id="hudtop"><span class="live">● LIVE</span><span id="hviewers"></span></div>
+  <div id="hchat"></div>
+</div>
+<div id="whisper" hidden><b></b><span></span></div>
+<div id="action" hidden>
+  <button id="abtn" type="button"><span id="alabel"></span></button>
+  <div id="ahint">Удерживай кнопку или пробел</div>
+</div>
+<div id="dialog" hidden>
+  <div id="dname"></div>
+  <div id="dtext"></div>
+  <div id="dnext">Пробел / клик</div>
+</div>
+
+<div id="touch" hidden>
+  <div id="dpad">
+    <button data-k="w" aria-label="Вверх">▲</button>
+    <button data-k="a" aria-label="Влево">◀</button>
+    <button data-k="s" aria-label="Вниз">▼</button>
+    <button data-k="d" aria-label="Вправо">▶</button>
+  </div>
+  <button id="ebtn" aria-label="Действие">E</button>
+</div>
+
+<div id="overlay" hidden></div>
+<script type="module" src="/js/main.js"></script>
+</body>
+</html>

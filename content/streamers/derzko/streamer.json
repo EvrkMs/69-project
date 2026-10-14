@@ -1,0 +1,78 @@
+{
+  "id": "derzko",
+  "name": "Дерзко",
+  "nick": "derzko69",
+  "tagline": "Путь от школьной комнаты и пустого YouTube до самого громкого эфира на русском Twitch.",
+  "accent": "#ff6b9d",
+  "hero": {
+    "name": "Дерзко",
+    "look": { "body": "#7b4dff", "hair": "#2b1d14", "skin": "#f1c9a5", "headset": "#ff6b9d" }
+  },
+  "disclaimer": "Фан-проект. Реплики героя и персонажей вымышлены, факты взяты из открытых источников и подписаны.",
+  "idle": ["У меня уже спина болит.", "Так, а что дальше-то делать?", "Чат, вы тут?"],
+  "sources": {
+    "blog": {
+      "label": "cyber.sports.ru: биография Дерзко",
+      "url": "https://cyber.sports.ru/streamers-twitch/blogs/3399124.html"
+    },
+    "ban": {
+      "label": "Respawn: бан на Twitch",
+      "url": "https://respawn.media/nikkeyme/54a5p-derzko-byl-bessrochno-zabanen-na-twitch"
+    },
+    "squad": {
+      "label": "cyber.sports.ru: состав «Шпаны»",
+      "url": "https://cyber.sports.ru/streamers-twitch/blogs/3401509.html"
+    },
+    "end": {
+      "label": "esports.ru: распад «Шпаны»",
+      "url": "https://esports.ru/striming/news/skvad-shpana-prekratil-sushchestvovanie/"
+    },
+    "kasha": {
+      "label": "cyber.sports.ru: Каша",
+      "url": "https://cyber.sports.ru/streamers-twitch/blogs/3392205.html"
+    },
+    "mafanya": {
+      "label": "cyber.sports.ru: Мафаня",
+      "url": "https://cyber.sports.ru/tribuna/blogs/memewise/3389785.html"
+    },
+    "dk": {
+      "label": "Metaratings: DK",
+      "url": "https://cybersport.metaratings.ru/articles/strimer-dk-muzykalnaya-karera-efiry-na-twitch-klipy-na-youtube/"
+    },
+    "moral": {
+      "label": "Respawn: Moral Squad",
+      "url": "https://respawn.media/celebrities/da27b-novyy-skvad-na-tviche-danya-kashin-otkryl-moral-squad"
+    },
+    "lida": { "label": "Рувики: Lida", "url": "https://ru.ruwiki.ru/wiki/Lida" },
+    "lidastream": {
+      "label": "Respawn: стрим Lida",
+      "url": "https://respawn.media/celebrities/h0424-serega-pirat-provedet-strim-s-lida-v-chest-iubileia-pesni-chsv-i-vot-kogda"
+    },
+    "tracker": {
+      "label": "TwitchTracker: эфиры Дерзко (неофициально)",
+      "url": "https://twitchtracker.com/derzko69/streams"
+    },
+    "tracker2": {
+      "label": "TwitchTracker: эфиры Deepins (неофициально)",
+      "url": "https://twitchtracker.com/deepins02/streams"
+    },
+    "site": { "label": "derzko69.ru", "url": "https://derzko69.ru/" },
+    "slay": {
+      "label": "esports.ru: премия SLAY 2025",
+      "url": "https://esports.ru/news/stal-izvesten-spisok-dopolnitelnykh-nominaczij-premii-slay-2025/"
+    },
+    "slayresult": {
+      "label": "Respawn: итоги SLAY 2025, «Человек-мем года»",
+      "url": "https://respawn.media/celebrities/o199d-kto-zabral-nagradu-chelovek-mem-goda-na-slay-2025-pobeditel-izvesten"
+    },
+    "exit": {
+      "label": "Rutube: интервью от 5.04.2024 (там Дерзко уже назван бывшим участником «Шпаны»)",
+      "url": "https://rutube.ru/video/f174e7e5104fea3ac75bf73bf59360bd/"
+    },
+    "songs": {
+      "label": "Taverna: биография и песни",
+      "url": "https://taverna.gg/streaming/guides/biografiya-strimera-derzko69-rost-vozrast-i-vse-pesni/"
+    }
+  },
+  "chapters": ["c1-first-room", "c2-pandemic", "c3-street", "c4-shpana", "c5-now"]
+}

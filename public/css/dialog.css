@@ -1,0 +1,29 @@
+/* Hero / NPC lines (bottom window) and fact / clip cards (modal at the top centre). */
+#dialog { position:fixed; left:50%; bottom:20px; transform:translateX(-50%); width:min(720px, calc(100vw - 24px)); min-height:140px; background:var(--panel); border:2px solid var(--line); border-radius:12px; padding:14px 18px 28px; cursor:pointer; }
+#dname { font-weight:700; color:var(--acc); margin-bottom:4px; }
+#dialog.npc #dname { color:var(--acc2); }
+#dtext { font-size:17px; min-height:52px; }
+#dnext { position:absolute; right:16px; bottom:8px; font-size:12px; color:var(--dim); animation:blink 1.2s infinite; }
+
+/* Hold-to-confirm action: a round button whose ring fills while it is held. */
+#action { position:fixed; left:50%; bottom:36px; transform:translateX(-50%); z-index:3; display:flex; flex-direction:column; align-items:center; gap:8px; animation:rise .25s ease-out; }
+@keyframes rise { from { opacity:0; transform:translate(-50%, 16px); } }
+#abtn { --p:0; position:relative; width:120px; height:120px; padding:0; border:0; border-radius:50%; cursor:pointer; touch-action:none;
+  background:conic-gradient(var(--acc) calc(var(--p) * 360deg), rgba(255,255,255,.14) 0); box-shadow:0 0 30px color-mix(in srgb, var(--acc) 40%, transparent); }
+#abtn::before { content:""; position:absolute; inset:9px; border-radius:50%; background:var(--panel); }
+#abtn:active::before { background:#1b2038; }
+#abtn span { position:relative; display:block; padding:0 14px; font-weight:700; font-size:15px; line-height:1.2; }
+#ahint { font-size:12px; color:var(--dim); text-shadow:0 1px 4px #000; }
+
+#fact { position:fixed; left:50%; top:16px; transform:translateX(-50%); z-index:4; width:min(580px, calc(100vw - 24px)); max-height:calc(100vh - 32px); overflow:auto;
+  background:var(--panel); border:2px solid var(--fact); border-radius:14px; padding:16px 18px 14px; box-shadow:0 12px 40px rgba(0,0,0,.5); animation:drop .25s ease-out; }
+@keyframes drop { from { opacity:0; transform:translate(-50%, -16px); } }
+#flabel { display:inline-block; font-size:12px; font-weight:800; letter-spacing:.14em; color:#16091a; background:var(--fact); border-radius:6px; padding:2px 8px; margin-bottom:8px; }
+#ftext { font-size:17px; min-height:48px; cursor:pointer; }
+#fmedia { margin-top:12px; user-select:text; }
+#fmedia iframe { display:block; width:100%; aspect-ratio:16/9; border:0; border-radius:8px; background:#000; }
+#fmedia .cap { display:flex; justify-content:space-between; gap:10px; margin-top:8px; font-size:13px; }
+#fmedia .cap a { color:var(--acc2); white-space:nowrap; }
+#fmedia .note { margin-top:4px; font-size:11px; color:var(--dim); }
+#ffoot { display:flex; justify-content:space-between; align-items:center; margin-top:12px; }
+#fsrc { font-size:12px; color:var(--acc2); }

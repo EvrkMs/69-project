@@ -1,0 +1,5 @@
+node_modules/
+# signing key for session cookies, generated on first start; never commit it
+.secret
+.claude/settings.local.json
+*.log
