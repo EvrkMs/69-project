@@ -13,6 +13,7 @@
 #qhint { margin-top:8px; font-size:12px; color:var(--dim); white-space:pre-line; }
 
 #menuBtn { position:fixed; right:16px; top:16px; }
+#soundBtn { position:fixed; right:16px; bottom:16px; z-index:5; width:40px; height:40px; padding:0; border-radius:50%; font-size:18px; line-height:1; }
 
 #prompt { position:fixed; left:50%; bottom:190px; transform:translateX(-50%); background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:6px 12px; pointer-events:none; }
 

@@ -1,4 +1,5 @@
 import { state, $ } from '../state.js';
+import { sfx } from '../audio/sound.js';
 
 // Stream simulation while the hero is live at the PC: viewer counter, fake chat, floating hearts.
 // Chat nicknames and phrases are generic and invented; they are not real people.
@@ -45,6 +46,7 @@ export function updateStream(dt, now) {
   if (now > live.nextMsg) {
     live.nextMsg = now + 450 + Math.random() * 900;
     const [name, color] = pick(CHAT_USERS);
+    sfx('pop');
     live.chat.push({ color, w: 14 + Math.floor(Math.random() * 22) });
     if (live.chat.length > 7) live.chat.shift();
     const row = document.createElement('div');
@@ -54,6 +56,11 @@ export function updateStream(dt, now) {
     const box = $('hchat');
     box.append(row);
     while (box.childElementCount > 7) box.firstChild.remove();
+  }
+
+  if (now > (live.nextKey || 0)) { // the hero types while streaming
+    live.nextKey = now + 90 + Math.random() * (Math.random() < 0.15 ? 900 : 160);
+    sfx('key');
   }
 
   if (now > live.nextPart) {

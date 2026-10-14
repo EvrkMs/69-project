@@ -5,6 +5,7 @@ import { renderQuest } from '../ui/quest.js';
 import { pickInteraction, doorOpen, checkCounters } from './tasks.js';
 import { stopStream, syncStream } from './stream.js';
 import { blockedAt } from '../engine/world.js';
+import { sfx } from '../audio/sound.js';
 import { finishChapter, openMemento, openHome, openLobby } from './flow.js';
 
 /**
@@ -17,6 +18,7 @@ export function interact(o) {
 
   if (o.type === 'memento') return openMemento(o);
   if (o.type === 'portal') {
+    sfx('portal');
     if (o.to === 'lobby') return openLobby();
     if (o.to === 'soon') return whisper('За этой дверью пока никого нет. Скоро здесь появится новая комната.');
     return openHome(o.hero);
@@ -28,6 +30,7 @@ export function interact(o) {
       if (o.task) done.add(o.task);
       // the door swings open and floods with light before the chapter ends
       o.openedAt = performance.now();
+      sfx('door');
       state.locked = true;
       setTimeout(() => { state.locked = false; finishChapter(); }, 750);
     });
@@ -41,7 +44,7 @@ export function interact(o) {
     syncStream();
   }
   say(it.steps, () => {
-    if (it.task) { done.add(it.task); checkCounters(); renderQuest(); }
+    if (it.task) { done.add(it.task); checkCounters(); renderQuest(); sfx('task'); }
     if (hero.seated) {
       hero.seated = false;
       state.seat = null;

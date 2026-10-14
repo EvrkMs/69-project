@@ -2,6 +2,7 @@ import { state, $ } from '../state.js';
 import { renderQuest } from './quest.js';
 import { showAction, cancelAction } from './action.js';
 import { checkCounters } from '../game/tasks.js';
+import { sfx } from '../audio/sound.js';
 
 // Hero / NPC lines go to the bottom window; facts and clips go to a card at the top centre.
 // Two step kinds are not dialogue: "action" waits for a held button, "task" completes a task and moves on.
@@ -20,6 +21,7 @@ function showStep() {
     state.done.add(s.task);
     checkCounters();
     renderQuest();
+    sfx('task');
     return next();
   }
   if (s.who === 'action') {
@@ -48,11 +50,14 @@ function showStep() {
     showMedia(null);
   }
   const text = s.text;
+  if (card) sfx('fact');
+  const voice = s.who === 'hero' ? 'hero' : s.who === 'npc' ? 'npc' : null;
   let n = 0;
   clearInterval(typer);
   el.textContent = '';
   typer = setInterval(() => {
     n += 2;
+    if (voice && n % 6 === 0) sfx(voice); // a blip every third letter
     el.textContent = text.slice(0, n);
     if (n >= text.length) clearInterval(typer);
   }, 16);
@@ -78,6 +83,7 @@ export function advance() {
   const { dlg } = state;
   if (!dlg || dlg.waiting) return;
   if (dlg.el.textContent.length < dlg.full.length) { clearInterval(typer); dlg.el.textContent = dlg.full; return; }
+  sfx('next');
   next();
 }
 

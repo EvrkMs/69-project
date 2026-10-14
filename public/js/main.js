@@ -7,6 +7,8 @@ import { initDialog } from './ui/dialog.js';
 import { initAction } from './ui/action.js';
 import { initTouch } from './ui/touch.js';
 import { enterHub, onMenu } from './game/flow.js';
+import { initAudio } from './audio/sound.js';
+import { initSoundButton } from './ui/soundbtn.js';
 
 resize();
 addEventListener('resize', resize);
@@ -14,6 +16,8 @@ initInput();
 initDialog();
 initAction();
 initTouch();
+initAudio();
+initSoundButton();
 $('menuBtn').onclick = onMenu;
 
 let last = performance.now();

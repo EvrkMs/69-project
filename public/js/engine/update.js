@@ -7,6 +7,7 @@ import { updateStream, syncStream } from '../game/stream.js';
 import { interact } from '../game/interact.js';
 import { doorOpen } from '../game/tasks.js';
 import { whisper } from '../ui/whisper.js';
+import { sfx } from '../audio/sound.js';
 
 const SPEED = 3.4;        // tiles per second
 const IDLE_MS = 12000;    // idle chatter after this long without input
@@ -58,6 +59,7 @@ function announceDoors(now) {
     o.announced = true;
     state.focus = { x: o.x + o.w / 2, y: o.y + 1.5, until: now + 1800 };
     whisper('Дверь открыта. Пора выходить.');
+    sfx('announce');
   }
 }
 
@@ -86,7 +88,11 @@ export function update(dt, now) {
   announceDoors(now);
   if (state.focus && now > state.focus.until) state.focus = null;
   const look = state.focus || hero;
-  if (hero.moving) hero.t += dt * 9;
+  if (hero.moving) {
+    const before = Math.floor(hero.t / Math.PI);
+    hero.t += dt * 9;
+    if (Math.floor(hero.t / Math.PI) !== before) sfx('step'); // one footstep per half stride
+  }
   cam.x += (look.x - cam.x) * Math.min(1, dt * (state.focus ? 3 : 6));
   cam.y += (look.y - cam.y) * Math.min(1, dt * (state.focus ? 3 : 6));
 

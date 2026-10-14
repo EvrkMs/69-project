@@ -6,6 +6,7 @@ import { closeDialog } from '../ui/dialog.js';
 import { whisper } from '../ui/whisper.js';
 import { stopStream } from './stream.js';
 import { buildWorld } from '../engine/world.js';
+import { setAmbience, sfx } from '../audio/sound.js';
 
 // Where the player can be:
 //   lobby    a corridor with one door per hero, the hero's nickname on a plate above it
@@ -25,6 +26,8 @@ function setScene(scene, look) {
   closeDialog();
   stopStream();
   state.particles.length = 0;
+  const w = state.world;
+  setAmbience(w.lighting && w.lighting.mode === 'dark' ? 'dark' : w.indoor ? 'room' : 'outdoor');
 }
 
 // Events are memories: a sepia tint with darker corners, entered and left through a white flash.
@@ -34,6 +37,7 @@ function flash() {
   el.classList.remove('on');
   void el.offsetWidth; // restart the animation
   el.classList.add('on');
+  sfx('whoosh');
 }
 
 function updateMenuButton() {

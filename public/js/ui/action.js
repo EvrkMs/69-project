@@ -1,4 +1,5 @@
 import { $ } from '../state.js';
+import { holdTone, stopHold, sfx } from '../audio/sound.js';
 
 // "Hold to confirm" button used by ["action", label, {hold}] steps: press and hold the round button (mouse, touch,
 // or Space / Enter) until the ring fills. Releasing early drains the ring.
@@ -21,9 +22,11 @@ function tick(now) {
   cur.last = now;
   cur.t = cur.held ? cur.t + dt : Math.max(0, cur.t - dt * 1.5);
   $('abtn').style.setProperty('--p', Math.min(1, cur.t / cur.hold));
+  holdTone(Math.min(1, cur.t / cur.hold), cur.held);
   if (cur.t >= cur.hold) {
     const done = cur.onDone;
     cur = null;
+    stopHold(); sfx('announce');
     $('action').hidden = true;
     done();
     return;
@@ -36,6 +39,7 @@ export function holdKey(down) { if (cur) cur.held = down; }
 
 export function cancelAction() {
   cur = null;
+  stopHold();
   $('action').hidden = true;
 }
 
