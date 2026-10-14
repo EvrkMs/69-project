@@ -18,18 +18,7 @@ function drawFloor(now) {
     poly([proj(0, 0, WH), proj(w, 0, WH), proj(w, 0, WH + 0.08), proj(0, 0, WH + 0.08)], shade(wall, 0.2));
     poly([proj(0, 0, WH), proj(0, h, WH), proj(0, h, WH + 0.08), proj(0, 0, WH + 0.08)], shade(wall, 0.1));
   }
-  for (const d of state.world.deco) {
-    if (d.kind === 'window') drawWindowLight(d, now);
-    drawDeco(d, now);
-  }
-}
-
-/** Cold light from a window falling on the floor: two nested slanted patches that breathe slowly. */
-function drawWindowLight(d, now) {
-  const breathe = 0.8 + 0.2 * Math.sin(now / 1800);
-  const patch = (len, a) => poly([proj(0.03, d.from), proj(0.03, d.to), proj(len, d.to + len * 0.55), proj(len, d.from + len * 0.55)], `rgba(150,175,255,${a * breathe})`);
-  patch(2.6, 0.06);
-  patch(1.6, 0.06);
+  for (const d of state.world.deco) drawDeco(d, now);
 }
 
 /** Soft shadow under every piece of furniture: its footprint plus a copy shifted away from the (top-left) light, filled once. */

@@ -78,6 +78,7 @@ const painters = {
 
   window(d, now) {
     onPlaneX(0.02, d.from, d.to, d.z1, d.z0, 100, 80, () => {
+      ctx.save(); ctx.beginPath(); ctx.rect(0, 0, 100, 80); ctx.clip(); // the skyline must not spill out of the frame
       const g = ctx.createLinearGradient(0, 0, 0, 80);
       g.addColorStop(0, d.sky ? d.sky[0] : '#0b1030'); g.addColorStop(1, d.sky ? d.sky[1] : '#27306b');
       ctx.fillStyle = g; ctx.fillRect(0, 0, 100, 80);
@@ -90,6 +91,7 @@ const painters = {
       for (let i = 0; i < 8; i++) ctx.fillRect(i * 13, 80 - 16 - ((i * 29) % 24), 11, 60);
       ctx.fillStyle = '#ffd166';
       for (let i = 0; i < 8; i++) if (Math.sin(now / 1500 + i * 3) > 0) ctx.fillRect(i * 13 + 3, 80 - 12 - ((i * 29) % 24), 3, 3);
+      ctx.restore();
       ctx.strokeStyle = '#d7dcf5'; ctx.lineWidth = 5; ctx.strokeRect(2, 2, 96, 76);
       ctx.beginPath(); ctx.moveTo(50, 0); ctx.lineTo(50, 80); ctx.moveTo(0, 40); ctx.lineTo(100, 40); ctx.lineWidth = 3; ctx.stroke();
     });
