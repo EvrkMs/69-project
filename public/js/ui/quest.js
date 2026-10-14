@@ -6,7 +6,7 @@ const CHAPTER_HINT = 'ЛКМ: идти и говорить · WASD: двигат
 const HOME_HINT = 'ЛКМ или E: подойти к вещи. Каждая вещь открывает главу.';
 
 // On a phone the long lists (a room with 12 events) start folded; the player can unfold them by tapping the title.
-const compact = () => matchMedia('(max-width: 600px), (pointer: coarse)').matches;
+const compact = () => matchMedia('(max-width: 600px), (pointer: coarse), (max-height: 500px)').matches;
 let lastKey = '';
 
 export function initQuest() {

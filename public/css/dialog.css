@@ -20,7 +20,7 @@
 @keyframes drop { from { opacity:0; transform:translate(-50%, -16px); } }
 #flabel { display:inline-block; font-size:12px; font-weight:800; letter-spacing:.14em; color:#16091a; background:var(--fact); border-radius:6px; padding:2px 8px; margin-bottom:8px; }
 #ftext { font-size:17px; min-height:48px; cursor:pointer; }
-#fmedia { margin-top:12px; user-select:text; }
+#fmedia { margin-top:12px; }
 #fmedia iframe { display:block; width:100%; aspect-ratio:16/9; border:0; border-radius:8px; background:#000; }
 #fmedia .cap { display:flex; justify-content:space-between; gap:10px; margin-top:8px; font-size:13px; }
 #fmedia .cap a { color:var(--acc2); white-space:nowrap; }

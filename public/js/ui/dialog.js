@@ -9,6 +9,7 @@ import { sfx } from '../audio/sound.js';
 let typer = null;
 
 export function say(steps, onDone) {
+  document.body.classList.add('talking');
   state.dlg = { steps, i: 0, onDone };
   showStep();
 }
@@ -33,6 +34,7 @@ function showStep() {
   }
 
   const card = s.who === 'fact' || s.who === 'clip';
+  $('fact').classList.toggle('copyable', s.who === 'fact');
   $('dialog').hidden = card;
   $('fact').hidden = !card;
   let el;
@@ -71,6 +73,7 @@ function next() {
   if (dlg.i < dlg.steps.length) return showStep();
   const done = dlg.onDone;
   state.dlg = null;
+  document.body.classList.remove('talking');
   $('dialog').hidden = true;
   $('fact').hidden = true;
   showMedia(null);
@@ -88,6 +91,7 @@ export function advance() {
 }
 
 export function closeDialog() {
+  document.body.classList.remove('talking');
   clearInterval(typer);
   cancelAction();
   state.dlg = null;
@@ -139,6 +143,17 @@ function showMedia(m) {
 }
 
 export function initDialog() {
+  // Copying is allowed only for a fact's text: whatever else is selected (Ctrl+A, drag) never reaches the clipboard.
+  document.addEventListener('copy', (e) => {
+    const keep = $('fact').classList.contains('copyable') && !$('fact').hidden ? $('ftext') : null;
+    const sel = getSelection();
+    const ok = keep && sel.rangeCount && keep.contains(sel.anchorNode) && keep.contains(sel.focusNode);
+    if (ok) return;
+    e.preventDefault();
+    if (e.clipboardData) e.clipboardData.setData('text/plain', '');
+  });
+  document.addEventListener('cut', (e) => e.preventDefault());
+  document.addEventListener('dragstart', (e) => e.preventDefault());
   $('dialog').addEventListener('click', advance);
   $('fnext').addEventListener('click', advance);
   $('ftext').addEventListener('click', advance);

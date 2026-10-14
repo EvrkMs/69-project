@@ -32,7 +32,7 @@
 #knob { position:absolute; left:50%; top:50%; width:64px; height:64px; margin:-32px 0 0 -32px; border-radius:50%; background:var(--panel); border:2px solid var(--acc); box-shadow:0 2px 10px rgba(0,0,0,.45); pointer-events:none; }
 #ebtn { position:fixed; right:20px; bottom:44px; z-index:3; width:76px; height:76px; padding:0; border-radius:50%; font-size:26px; font-weight:800; border-color:var(--acc); }
 /* Phones: a compact panel that never covers the scene; tap the title to fold it, the hint is dropped (the d-pad explains itself) */
-@media (max-width: 600px), (pointer: coarse) {
+@media (max-width: 600px), (pointer: coarse), (max-height: 500px) {
   #quest { left:8px; top:8px; width:min(230px, calc(100vw - 120px)); padding:8px 10px; font-size:13px; }
   #qhint { display:none; }
   #qtasks { max-height:calc(100vh - 120px); }
@@ -40,6 +40,21 @@
   #soundBtn { right:8px; top:52px; }
 }
 @media (max-height: 460px) { #hud { display:none; } }
+
+/* Touch layout. Thumbs rest on the bottom corners (stick left, E right), so everything that must be read goes up:
+   lines of dialogue sit at the top of a portrait screen, the task list steps aside while someone talks, and in landscape
+   the task list is capped so it never reaches down to the stick. */
+@media (pointer: coarse), (max-width: 600px), (max-height: 500px) {
+  body.talking #quest { display:none; }
+  #qtasks { max-height:calc(100vh - 250px); min-height:3em; }
+  #whisper { bottom:240px; }
+}
+@media (pointer: coarse) and (orientation: portrait), (max-width: 600px) and (orientation: portrait) {
+  body #dialog { top:96px; bottom:auto; min-height:120px; } /* body: beats dialog.css, which loads later */
+  body #fact { top:96px; max-height:calc(100vh - 110px); }
+  #whisper { top:96px; bottom:auto; }
+  #prompt { bottom:200px; }
+}
 
 /* Stream HUD: shown while the hero is live at the PC */
 #hud { position:fixed; left:16px; bottom:190px; width:min(270px, calc(100vw - 32px)); background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:8px 10px; pointer-events:none; }
