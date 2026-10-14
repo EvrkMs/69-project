@@ -15,6 +15,7 @@ const IDLE_MS = 12000;    // idle chatter after this long without input
 function keyboardDirection() {
   const { keys } = state;
   let dx = 0, dy = 0;
+  if (state.stick) { const { x, y } = state.stick; return [x + y, y - x]; } // screen right/down -> iso world axes
   if (keys.has('w') || keys.has('arrowup')) { dx -= 1; dy -= 1; }
   if (keys.has('s') || keys.has('arrowdown')) { dx += 1; dy += 1; }
   if (keys.has('a') || keys.has('arrowleft')) { dx -= 1; dy += 1; }

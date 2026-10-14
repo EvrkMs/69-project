@@ -29,6 +29,7 @@ export const state = {
   hover: null,
   mouse: { x: -1, y: -1 },
   keys: new Set(),
+  stick: null,         // on-screen stick: { x, y } screen direction (-1..1) or null when released
   locked: true,        // true while a full-screen menu is open
   // effects
   pings: [],
