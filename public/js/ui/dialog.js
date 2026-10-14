@@ -170,6 +170,10 @@ export function initDialog() {
     if (e.clipboardData) e.clipboardData.setData('text/plain', '');
   });
   document.addEventListener('cut', (e) => e.preventDefault());
+  // A long press (hold-to-confirm button, stick, bubbles) must not start a selection or open the context menu on touch screens.
+  const copyable = (t) => t instanceof Element && !!t.closest('#fact.copyable #ftext');
+  document.addEventListener('selectstart', (e) => { if (!copyable(e.target.nodeType === 1 ? e.target : e.target.parentElement)) e.preventDefault(); });
+  document.addEventListener('contextmenu', (e) => { if (!copyable(e.target)) e.preventDefault(); });
   document.addEventListener('dragstart', (e) => e.preventDefault());
   $('dialog').addEventListener('click', advance);
   $('fnext').addEventListener('click', advance);

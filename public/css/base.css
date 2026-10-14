@@ -2,7 +2,7 @@
 :root { --bg:#0c0e18; --fg:#e8ecff; --dim:#8b93b8; --acc:#ff6b9d; --acc2:#7fd0ff; --fact:#ffd166; --panel:rgba(14,17,32,.92); --line:#2a3050; }
 * { box-sizing: border-box; }
 html, body { margin:0; height:100%; overflow:hidden; background:var(--bg); color:var(--fg); font:15px/1.45 "Segoe UI", system-ui, sans-serif; -webkit-user-select:none; user-select:none; }
-* { -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; }
+* { -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; -webkit-tap-highlight-color:transparent; }
 /* the only text that can be selected and copied is a fact card's text */
 #fact.copyable #ftext { -webkit-user-select:text; user-select:text; }
 canvas { position:fixed; inset:0; display:block; cursor:pointer; touch-action:none; }
