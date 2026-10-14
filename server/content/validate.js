@@ -1,6 +1,6 @@
 // Content validation. Everything here runs at server start and in `npm run validate`, so a typo in
 // content/ fails loudly instead of showing up as a stuck door in the game.
-import { buildGrid, isBlockedTile, findPath, spotGoal } from '../../shared/grid.js';
+import { buildGrid, isBlockedTile, blockedAtPoint, findPath, spotGoal } from '../../shared/grid.js';
 import { MODEL_NAMES, DECO_KINDS, LIGHTING_MODES } from '../../shared/models.js';
 
 const SPEAKERS = new Set(['hero', 'npc', 'fact', 'clip']);
@@ -66,6 +66,7 @@ function validateScene(sc, p, errors) {
   }
   const [si, sj] = [Math.floor(sc.start.x), Math.floor(sc.start.y)];
   if (isBlockedTile(grid, si, sj)) { errors.push(`${p}: start tile ${si},${sj} is blocked`); return false; }
+  if (blockedAtPoint(grid, sc.start.x, sc.start.y)) { errors.push(`${p}: start point ${sc.start.x},${sc.start.y} is wedged against furniture (the body is 0.4 wide: start in the middle of a free tile)`); return false; }
   for (const o of grid.objs) {
     if (o.type === 'prop') continue;
     if (o.sitAt && isBlockedTile(grid, Math.floor(o.sitAt.x), Math.floor(o.sitAt.y))) { errors.push(`${p}: seat of "${o.id}" is blocked`); continue; }

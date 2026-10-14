@@ -39,7 +39,7 @@ const make = () => ({
   chapters: [{
     id: 'c1', year: 2000, title: 'T', intro: 'I', memento: { name: 'Thing', glyph: '*', text: 'A keepsake.' }, tasks: [{ id: 'go', text: 'Go' }],
     scene: {
-      w: 5, h: 5, floor: ['#000000', '#111111'], start: { x: 1, y: 3 },
+      w: 5, h: 5, floor: ['#000000', '#111111'], start: { x: 1.5, y: 3.5 },
       objects: [
         { id: 'box', name: 'Box', type: 'box', x: 1, y: 1, w: 1, h: 1, z: 1, interactions: [{ task: 'go', steps: [{ who: 'fact', text: 'f', src: 'a' }] }] },
         { id: 'door', name: 'Door', type: 'door', x: 3, y: 0, w: 1, h: 0.3, z: 2, requires: ['go'], locked: [{ who: 'hero', text: 'no' }], steps: [{ who: 'hero', text: 'ok' }] },
@@ -137,4 +137,10 @@ test('ContentError lists every problem', () => {
 
 test('unlock must be free or sequential', () => {
   assert.match(problems((s) => { s.meta.unlock = 'maybe'; }), /unlock must be "free" or "sequential"/);
+});
+
+test('the hero must not start wedged against furniture (the body is wider than a point)', () => {
+  // a block ends exactly where the hero starts: the point is on a free tile, but the body's left edge is inside the block
+  const msg = problems((s) => { const sc = s.chapters[0].scene; sc.start = { x: 3, y: 2.5 }; sc.objects.push({ id: 'wall', name: 'Wall', type: 'box', x: 2, y: 2, w: 1, h: 1, z: 1, color: '#444', interactions: [{ steps: [['h', 'x']] }] }); });
+  assert.match(msg, /start point 3,2.5 is wedged against furniture/);
 });

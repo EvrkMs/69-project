@@ -19,7 +19,7 @@
       "indoor": true,
       "floor": ["#2e2a30", "#2a262c"],
       "wall": "#4a3f55",
-      "start": { "x": 6, "y": 6 },
+      "start": { "x": 6.5, "y": 6.5 },
       "deco": []
     },
     "park": {
@@ -36,7 +36,7 @@
       "indoor": true,
       "floor": ["#1b1d24", "#181a20"],
       "wall": "#262a35",
-      "start": { "x": 6, "y": 6 },
+      "start": { "x": 6.5, "y": 6.5 },
       "lighting": { "mode": "dark", "radius": 3 },
       "deco": []
     },
