@@ -85,6 +85,12 @@ export function update(dt, now) {
     idleChatter(now);
   }
 
+  if (state.zoomNow !== state.zoom) { // ease towards the wheel / pinch target
+    state.zoomNow += (state.zoom - state.zoomNow) * Math.min(1, dt * 12);
+    if (Math.abs(state.zoom - state.zoomNow) < 0.002) state.zoomNow = state.zoom;
+    state.Z = state.baseZ * state.zoomNow;
+  }
+
   announceDoors(now);
   if (state.focus && now > state.focus.until) state.focus = null;
   const look = state.focus || hero;

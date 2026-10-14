@@ -6,6 +6,8 @@ export const $ = (id) => document.getElementById(id);
 export const state = {
   // viewport
   W: 0, H: 0, Z: 1,
+  baseZ: 1,            // scale that fits the window
+  zoom: 1, zoomNow: 1, // player's zoom (mouse wheel / pinch): the target and the smoothed value, multiplied into Z
   // content
   mode: 'lobby',       // 'lobby' (doors to heroes) | 'home' (a hero's room with keepsakes) | 'chapter'
   streamers: [],       // heroes with the player's progress

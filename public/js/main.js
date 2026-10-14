@@ -9,6 +9,7 @@ import { initTouch } from './ui/touch.js';
 import { enterHub, onMenu } from './game/flow.js';
 import { initAudio } from './audio/sound.js';
 import { initSoundButton } from './ui/soundbtn.js';
+import { initQuest } from './ui/quest.js';
 
 resize();
 addEventListener('resize', resize);
@@ -18,6 +19,7 @@ initAction();
 initTouch();
 initAudio();
 initSoundButton();
+initQuest();
 $('menuBtn').onclick = onMenu;
 
 let last = performance.now();

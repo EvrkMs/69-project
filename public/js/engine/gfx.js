@@ -10,7 +10,8 @@ export function resize() {
   canvas.width = state.W * dpr; canvas.height = state.H * dpr;
   canvas.style.width = state.W + 'px'; canvas.style.height = state.H + 'px';
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  state.Z = Math.max(0.6, Math.min(1.25, state.W / 1150));
+  state.baseZ = Math.max(0.6, Math.min(1.25, state.W / 1150));
+  state.Z = state.baseZ * state.zoomNow;
 }
 
 /** Lightens (f > 0) or darkens (f < 0) a #rrggbb color. */

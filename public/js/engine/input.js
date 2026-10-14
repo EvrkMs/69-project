@@ -6,11 +6,30 @@ import { advance } from '../ui/dialog.js';
 import { isActionActive, holdKey } from '../ui/action.js';
 import { walkTo, goInteract } from '../game/navigation.js';
 
+const ZOOM_MIN = 0.4, ZOOM_MAX = 1.9;
+const zoomBy = (f) => { state.zoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, state.zoom * f)); };
+
 const MOVE_KEYS = new Set(['w', 'a', 's', 'd', 'arrowup', 'arrowleft', 'arrowdown', 'arrowright']);
 
 export function initInput() {
   canvas.addEventListener('mousemove', (e) => { state.mouse = { x: e.clientX, y: e.clientY }; });
   canvas.addEventListener('mouseleave', () => { state.mouse = { x: -1, y: -1 }; });
+
+  // Mouse wheel zooms the camera, like in most games; two fingers pinch on touch screens.
+  canvas.addEventListener('wheel', (e) => { e.preventDefault(); zoomBy(Math.exp(-e.deltaY * 0.0015)); }, { passive: false });
+  const touches = new Map();
+  let pinch = 0;
+  canvas.addEventListener('pointerdown', (e) => { if (e.pointerType === 'touch') { touches.set(e.pointerId, e); pinch = 0; } });
+  canvas.addEventListener('pointermove', (e) => {
+    if (!touches.has(e.pointerId)) return;
+    touches.set(e.pointerId, e);
+    if (touches.size !== 2) return;
+    const [a, b] = [...touches.values()];
+    const d = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+    if (pinch) zoomBy(d / pinch);
+    pinch = d;
+  });
+  for (const ev of ['pointerup', 'pointercancel']) canvas.addEventListener(ev, (e) => { touches.delete(e.pointerId); pinch = 0; });
 
   canvas.addEventListener('click', (e) => {
     if (state.locked) return;
