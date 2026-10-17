@@ -4,3 +4,5 @@ node_modules/
 .claude/settings.local.json
 *.log
 .env
+
+compose.yaml
